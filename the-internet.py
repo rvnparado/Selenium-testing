@@ -5,9 +5,10 @@ from selenium.webdriver.common.by import By  # so that we can search elements
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.alert import Alert
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
 import time
 import requests
 
@@ -35,15 +36,25 @@ def main():
     contextmenu() # menu wont close
     digest_auth()
     disappearing_elements()
+    drag_drop()
+    dropdown()
+    dynamic_content()
+    dynamic_controls()
 
 
 def webdriverwait_func(xpath_text):
-    WebDriverWait(driver, 5).until(
-        EC.presence_of_element_located(
-            (By.XPATH, f"//*[contains(text(), '{xpath_text}')]"))
-    )
-
-
+    try:
+        element = WebDriverWait(driver, 5).until(
+            EC.presence_of_element_located(
+                (By.XPATH, f"//*[contains(text(), '{xpath_text}')]"))
+        )
+        return element
+    except TimeoutException as e:
+        print(f"TimeoutException: {str(e)}")
+        print(f"Element with XPath '{xpath_text}' was not found within the specified timeout.")
+        driver.quit()
+        exit()
+        
 def abtesting():
     xpath_text = 'B Testing'
     webdriverwait_func(xpath_text)
@@ -55,7 +66,6 @@ def abtesting():
     print(paragraph_text)
     time.sleep(2)
     driver.back()
-
 
 def add_remove_elements():
     xpath_text = 'Remove Elements'
@@ -84,7 +94,6 @@ def add_remove_elements():
 
     driver.back()
 
-
 def basic_auth():
     # this will get the original url so that after navigating to the basic_aut we can go back to the original
     xpath_text = 'Basic Auth'
@@ -100,7 +109,6 @@ def basic_auth():
     time.sleep(2)
 
     driver.get(originalURL)
-
 
 def broken_images():
     xpath_text = 'Broken Images'
@@ -127,7 +135,6 @@ def broken_images():
 
         time.sleep(1)
     driver.back()
-
 
 def challenging_dom():
     xpath_text = 'Challenging DOM'  # Case sensitive
@@ -314,6 +321,108 @@ def disappearing_elements():
             
     disElements_main()
 
+def drag_drop():
+    xpath_text = 'Drag and Drop'
+    webdriverwait_func(xpath_text)
+    dragNdrop = driver.find_element(By.XPATH, f"//*[contains(text(), '{xpath_text}')]")
+    dragNdrop.click()
+    
+    column_A = driver.find_element(By.ID, 'column-a')
+    column_B = driver.find_element(By.ID, 'column-b')
+    action_chains.drag_and_drop(column_A, column_B).perform()
+    time.sleep(2)
+    action_chains.drag_and_drop(column_A, column_B).perform()
+    time.sleep(2)
+    driver.back()
+
+def dropdown():
+    xpath_text = 'Dropdown'
+    dropdown_home = webdriverwait_func(xpath_text)
+    if dropdown_home:
+        dropdown_home.click()
+
+        dropdown_element = driver.find_element(By.ID, 'dropdown')
+        select = Select(dropdown_element)
+
+        for option_text in ['Option 1', 'Option 2']: # this will iterate the number of options in the list         
+            dropdown_element.click()
+            time.sleep(1)
+            select.select_by_visible_text(option_text)
+            dropdown_element.click()
+            time.sleep(1)
+
+        driver.back()
+
+def dynamic_content():
+    xpath_text = 'Dynamic Content'
+    dynamicContent = webdriverwait_func(xpath_text)
+    dynamicContent.click()
+    
+    
+    def print_content():
+        dynamicContent_elements = driver.find_elements(By.XPATH, "//div[@class='large-10 columns']") # this will select the entire css inside the <div ... >
+        # print(len(dynamicContent_elements))
+        for element in dynamicContent_elements:
+            print(f'Content : {element.text}')
+        return len(dynamicContent_elements)
+
+    def refresh_page():
+        count_elements = print_content()
+        for i in range(1, count_elements + 1): # this ensure that i will start at 1 rather than 0
+            click_here = driver.find_element(By.XPATH, '//*[contains(text(), "click here")]')
+            print(f'\nRefresh {i}: \n')
+            # driver.refresh()
+            print_content()
+            click_here.click()
+            time.sleep(2)
+    
+    refresh_page()
+    time.sleep(5)
+    driver.get(originalURL)
+    
+def dynamic_controls():
+    xpath_text = 'Dynamic Controls'
+    dynamicControls = webdriverwait_func(xpath_text)
+    dynamicControls.click()
+    
+    add_remove_button = driver.find_element(By.XPATH, '//*[@onclick="swapCheckbox()"]')
+    enable_disable_button = driver.find_element(By.XPATH, '//*[@onclick="swapInput()"]')
+    
+    def add_remove():
+        if add_remove_button.text == 'Remove':
+            time.sleep(1)
+            checkbox = driver.find_element(By.CSS_SELECTOR, 'input[type="checkbox"]')
+            checkbox.click()
+            time.sleep(1)
+            add_remove_button.click()
+        else:
+            time.sleep(1)
+            add_remove_button.click()
+            
+    def enable_disable():
+        if enable_disable_button.text == 'Disable':
+            time.sleep(1)
+            textbox = driver.find_element(By.CSS_SELECTOR, 'input[type="text"]')
+            textbox.send_keys('Test') 
+            time.sleep(1)
+            enable_disable_button.click()
+        else:
+            time.sleep(1)
+            enable_disable_button.click()
+
+    def loading():
+        WebDriverWait(driver, 10).until(
+            EC.invisibility_of_element_located((By.ID, 'loading')))
+        time.sleep(2)
+        
+    for i in range(3):
+        add_remove()
+        enable_disable()
+        loading()
+    
+    driver.back()
+    
+    
 if __name__ == '__main__':
     main()
 
