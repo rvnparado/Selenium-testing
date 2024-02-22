@@ -42,7 +42,10 @@ def main():
     # dynamic_controls()
     # dynamic_loading()
     # entry_ad()
-    exit_intent()
+    # exit_intent()
+    # file_download() # this will download all files
+    # file_upload()
+    floating_menu()
 
 
 def webdriverwait_func(xpath_text):
@@ -457,61 +460,64 @@ def dynamic_loading():
 
     def hidden_element():
         hiddenElement = driver.find_element(
-        By.XPATH, '//*[contains(text(), "Example 1: Element on page that is hidden")]')
+            By.XPATH, '//*[contains(text(), "Example 1: Element on page that is hidden")]')
         hiddenElement.click()
         time.sleep(2)
-        
+
         startButton = driver.find_element(
             By.XPATH, '//*[contains(text(), "Start")]')
         startButton.click()
         time.sleep(5)
-        
+
         helloWorld_hidden = webdriverwait_func('Hello World!')
         helloWorld_hidden_text = helloWorld_hidden.text
         print(f'The hidden element is {helloWorld_hidden_text}')
         time.sleep(1)
         driver.back()
-        
+
     def rendered_element():
         renderedElement = driver.find_element(
-        By.XPATH, '//*[contains(text(), "Example 2: Element rendered after the fact")]')
+            By.XPATH, '//*[contains(text(), "Example 2: Element rendered after the fact")]')
         renderedElement.click()
         time.sleep(2)
-        
+
         startButton = driver.find_element(
             By.XPATH, '//*[contains(text(), "Start")]')
         startButton.click()
         time.sleep(5)
-        
+
         helloWorld_hidden = WebDriverWait(driver, 20).until(
             EC.visibility_of_element_located(
                 (By.ID, 'finish'))
         )
         helloWorld_hidden_text = helloWorld_hidden.text
-        print(f'The rendered element after the fact is {helloWorld_hidden_text}')
+        print(f'The rendered element after the fact is {
+              helloWorld_hidden_text}')
         time.sleep(1)
         driver.back()
-    
+
     hidden_element()
-    rendered_element() # this uses the visibility_of_element
+    rendered_element()  # this uses the visibility_of_element
     driver.get(originalURL)
+
 
 def entry_ad():
     xpath_text = 'Entry Ad'
     entryAd = webdriverwait_func(xpath_text)
     entryAd.click()
-    
+
     restartAd = WebDriverWait(driver, 10).until(
         EC.visibility_of_element_located((By.ID, 'restart-ad')))
-    
+
     def closeModal():
         print('Closing the Entry Ad')
-        closeBtn = driver.find_element(By.XPATH, '//*[contains(text(), "Close")]')
+        closeBtn = driver.find_element(
+            By.XPATH, '//*[contains(text(), "Close")]')
         closeBtn.click()
         time.sleep(2)
-    
-    modals_displayed = 0    
-    while modals_displayed < 2: # I use while so that the modal will show at least twice. 
+
+    modals_displayed = 0
+    while modals_displayed < 2:  # I use while so that the modal will show at least twice.
         try:
             time.sleep(2)
             modalDisplay = WebDriverWait(driver, 10).until(
@@ -530,28 +536,32 @@ def entry_ad():
             print("Timeout waiting for modal. Exiting loop.")
             break
     driver.get(originalURL)
-    
+
+
 def exit_intent():
     xpath_text = 'Exit Intent'
     exitIntent = webdriverwait_func(xpath_text)
     exitIntent.click()
-    
+
     y_offset = 300
-    
+
     time.sleep(5)
     # driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.END)
-    point_of_offset = driver.find_element(By.XPATH, '//*[contains(text(), "Elemental Selenium")]')
-    
+    point_of_offset = driver.find_element(
+        By.XPATH, '//*[contains(text(), "Elemental Selenium")]')
+
     try:
-    # Continue the loop until the modal appears or a timeout occurs
+        # Continue the loop until the modal appears or a timeout occurs
         timeout = 10  # Set your desired timeout
         start_time = time.time()
 
         while time.time() - start_time < timeout:
             # Move the cursor to the reference element with offset
-            action_chains.move_to_element_with_offset(point_of_offset, 0, y_offset).perform()
+            action_chains.move_to_element_with_offset(
+                point_of_offset, 0, y_offset).perform()
             time.sleep(1)  # Adjust the sleep duration as needed
-            action_chains.move_to_element_with_offset(point_of_offset, 0, -y_offset).perform()
+            action_chains.move_to_element_with_offset(
+                point_of_offset, 0, -y_offset).perform()
             time.sleep(1)  # Adjust the sleep duration as needed
             print('1')
             # Check if the modal is visible
@@ -561,8 +571,105 @@ def exit_intent():
 
     except Exception as e:
         print(f"An error occurred: {str(e)}")
-       
+
+
+def file_download():
+    xpath_text = 'File Download'
+    fileDownload = webdriverwait_func(xpath_text)
+    fileDownload.click()
+
+    listExample = driver.find_element(By.CLASS_NAME, 'example')
+    files = listExample.find_elements(By.CSS_SELECTOR, 'a')
+    
+    print(f'Downloading {len(files)} files...')
+    time.sleep(2)
+    
+    for file in files:
+        file.click()
+        time.sleep(1)
+
+    time.sleep(2)
+    print(f'Succesfully downloaded {len(files)} files...')
+    
+    driver.get(originalURL)
+
+
+def file_upload():
+    xpath_text = 'File Upload'
+    fileUpload = webdriverwait_func(xpath_text)
+    fileUpload.click()
+    # this means raw string or you can just use \\ each
+    filePath = r"C:\Users\Admin\Documents\Python Examples\Trainin\Automation Projects\Selenium Project\test.txt"
+
+    def valid_upload():
+        fileUpload = driver.find_element(By.ID, 'file-upload')
+        fileSubmit = driver.find_element(By.ID, 'file-submit')
+
+        fileUpload.send_keys(filePath)
+        print('1')
+        time.sleep(2)
+        fileSubmit.click()
+        time.sleep(1)
+        driver.get('https://the-internet.herokuapp.com/upload')
+        time.sleep(1)
+
+    def invalid_upload():
+        fileSubmit = driver.find_element(By.ID, 'file-submit')
+
+        fileSubmit.click()
+        time.sleep(1)
+        driver.back()
+
+    valid_upload()
+    invalid_upload()
+    time.sleep(1)
+    driver.get(originalURL)
+
+
+def floating_menu():
+    xpath_text = 'Floating Menu'
+    floatingMenu = webdriverwait_func(xpath_text)
+    floatingMenu.click()
+
+    floatingMenu_element = WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.ID, 'menu'))
+    )
+
+    def get_list():
+        list_menu = floatingMenu_element.find_elements(By.CSS_SELECTOR, 'li')
+        lists = []
+        for list in list_menu:
+            lists.append(list.text)
+        return lists
+
+    def get_link_list(lists):
+        link_lists = []
+        for i in range(len(lists)):
+            list = driver.find_element(
+                By.XPATH, f'//*[contains(text(), "{lists[i]}")]')
+            link_list = list.get_property('href')
+            link_lists.append(link_list)
+        return link_lists
+    lists = get_list()
+    link_lists = get_link_list(lists)
+
+    for i in range(1, 5):
+        time.sleep(1)
+        l = i - 1
+        print(f'Menu {i}: {lists[l]} - URL: {link_lists[l]}')
+    time.sleep(2)
+    driver.get(originalURL)
+
+
 if __name__ == '__main__':
     main()
+
+# n = 5  # Change this value to adjust the height of the triangle
+
+# for i in range(1, n + 1):
+#     spaces = " " * (n - i)
+#     stars = "*" * (2 * i - 1)
+#     print(spaces + stars)
+
 
 time.sleep(5)
