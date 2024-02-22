@@ -27,34 +27,39 @@ driver.get(originalURL)
 
 
 def main():
-    abtesting()
-    add_remove_elements()
-    basic_auth()
-    broken_images()
-    challenging_dom()
-    checkboxes()
-    contextmenu() # menu wont close
-    digest_auth()
-    disappearing_elements()
-    drag_drop()
-    dropdown()
-    dynamic_content()
-    dynamic_controls()
+    # abtesting()
+    # add_remove_elements()
+    # basic_auth()
+    # broken_images()
+    # challenging_dom()
+    # checkboxes()
+    # contextmenu() # menu wont close
+    # digest_auth()
+    # disappearing_elements()
+    # drag_drop()
+    # dropdown()
+    # dynamic_content()
+    # dynamic_controls()
+    # dynamic_loading()
+    # entry_ad()
+    exit_intent()
 
 
 def webdriverwait_func(xpath_text):
     try:
-        element = WebDriverWait(driver, 5).until(
+        element = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located(
                 (By.XPATH, f"//*[contains(text(), '{xpath_text}')]"))
         )
         return element
     except TimeoutException as e:
         print(f"TimeoutException: {str(e)}")
-        print(f"Element with XPath '{xpath_text}' was not found within the specified timeout.")
+        print(f"Element with XPath '{
+              xpath_text}' was not found within the specified timeout.")
         driver.quit()
         exit()
-        
+
+
 def abtesting():
     xpath_text = 'B Testing'
     webdriverwait_func(xpath_text)
@@ -66,6 +71,7 @@ def abtesting():
     print(paragraph_text)
     time.sleep(2)
     driver.back()
+
 
 def add_remove_elements():
     xpath_text = 'Remove Elements'
@@ -94,6 +100,7 @@ def add_remove_elements():
 
     driver.back()
 
+
 def basic_auth():
     # this will get the original url so that after navigating to the basic_aut we can go back to the original
     xpath_text = 'Basic Auth'
@@ -109,6 +116,7 @@ def basic_auth():
     time.sleep(2)
 
     driver.get(originalURL)
+
 
 def broken_images():
     xpath_text = 'Broken Images'
@@ -135,6 +143,7 @@ def broken_images():
 
         time.sleep(1)
     driver.back()
+
 
 def challenging_dom():
     xpath_text = 'Challenging DOM'  # Case sensitive
@@ -200,6 +209,7 @@ def challenging_dom():
     list_table()
     driver.back()
 
+
 def checkboxes():
     xpath_text = 'Checkboxes'
     webdriverwait_func(xpath_text)
@@ -217,6 +227,7 @@ def checkboxes():
     checkbox2.click()
     time.sleep(1)
     driver.back()
+
 
 def contextmenu():  # menu wont close
     xpath_text = 'Context Menu'
@@ -239,6 +250,7 @@ def contextmenu():  # menu wont close
     time.sleep(1)
     driver.back()
 
+
 def digest_auth():
     # this will get the original url so that after navigating to the basic_aut we can go back to the original
     xpath_text = 'Digest Authentication'
@@ -253,6 +265,7 @@ def digest_auth():
     driver.get(digestAuthURL)
     time.sleep(2)
     driver.get(originalURL)
+
 
 def disappearing_elements():
     disElements_url = 'https://the-internet.herokuapp.com/disappearing_elements'
@@ -271,7 +284,7 @@ def disappearing_elements():
         gallery()
         time.sleep(2)
         driver.get(originalURL)
-        
+
     def goto_main():
         xpath_text = 'Disappearing Elements'
         webdriverwait_func(xpath_text)
@@ -308,9 +321,10 @@ def disappearing_elements():
         driver.get(disElements_url)
 
     def gallery():
-        gallery_text = 'Gallery'      
+        gallery_text = 'Gallery'
         try:
-            galleryBtn = driver.find_element(By.XPATH, f'//*[contains(text(), "{gallery_text}")]')
+            galleryBtn = driver.find_element(
+                By.XPATH, f'//*[contains(text(), "{gallery_text}")]')
             galleryBtn.click()
             time.sleep(2)
             driver.get(disElements_url)
@@ -318,15 +332,17 @@ def disappearing_elements():
         except NoSuchElementException:
             print('Gallery element not found. Proceeding without clicking.')
             # driver.get(disElements_url)
-            
+
     disElements_main()
+
 
 def drag_drop():
     xpath_text = 'Drag and Drop'
     webdriverwait_func(xpath_text)
-    dragNdrop = driver.find_element(By.XPATH, f"//*[contains(text(), '{xpath_text}')]")
+    dragNdrop = driver.find_element(
+        By.XPATH, f"//*[contains(text(), '{xpath_text}')]")
     dragNdrop.click()
-    
+
     column_A = driver.find_element(By.ID, 'column-a')
     column_B = driver.find_element(By.ID, 'column-b')
     action_chains.drag_and_drop(column_A, column_B).perform()
@@ -334,6 +350,7 @@ def drag_drop():
     action_chains.drag_and_drop(column_A, column_B).perform()
     time.sleep(2)
     driver.back()
+
 
 def dropdown():
     xpath_text = 'Dropdown'
@@ -344,7 +361,8 @@ def dropdown():
         dropdown_element = driver.find_element(By.ID, 'dropdown')
         select = Select(dropdown_element)
 
-        for option_text in ['Option 1', 'Option 2']: # this will iterate the number of options in the list         
+        # this will iterate the number of options in the list
+        for option_text in ['Option 1', 'Option 2']:
             dropdown_element.click()
             time.sleep(1)
             select.select_by_visible_text(option_text)
@@ -353,14 +371,16 @@ def dropdown():
 
         driver.back()
 
+
 def dynamic_content():
     xpath_text = 'Dynamic Content'
     dynamicContent = webdriverwait_func(xpath_text)
     dynamicContent.click()
-    
-    
+
     def print_content():
-        dynamicContent_elements = driver.find_elements(By.XPATH, "//div[@class='large-10 columns']") # this will select the entire css inside the <div ... >
+        # this will select the entire css inside the <div ... >
+        dynamicContent_elements = driver.find_elements(
+            By.XPATH, "//div[@class='large-10 columns']")
         # print(len(dynamicContent_elements))
         for element in dynamicContent_elements:
             print(f'Content : {element.text}')
@@ -368,42 +388,49 @@ def dynamic_content():
 
     def refresh_page():
         count_elements = print_content()
-        for i in range(1, count_elements + 1): # this ensure that i will start at 1 rather than 0
-            click_here = driver.find_element(By.XPATH, '//*[contains(text(), "click here")]')
+        # this ensure that i will start at 1 rather than 0
+        for i in range(1, count_elements + 1):
+            click_here = driver.find_element(
+                By.XPATH, '//*[contains(text(), "click here")]')
             print(f'\nRefresh {i}: \n')
             # driver.refresh()
             print_content()
             click_here.click()
             time.sleep(2)
-    
+
     refresh_page()
     time.sleep(5)
     driver.get(originalURL)
-    
+
+
 def dynamic_controls():
     xpath_text = 'Dynamic Controls'
     dynamicControls = webdriverwait_func(xpath_text)
     dynamicControls.click()
-    
-    add_remove_button = driver.find_element(By.XPATH, '//*[@onclick="swapCheckbox()"]')
-    enable_disable_button = driver.find_element(By.XPATH, '//*[@onclick="swapInput()"]')
-    
+
+    add_remove_button = driver.find_element(
+        By.XPATH, '//*[@onclick="swapCheckbox()"]')
+    enable_disable_button = driver.find_element(
+        By.XPATH, '//*[@onclick="swapInput()"]')
+
     def add_remove():
         if add_remove_button.text == 'Remove':
             time.sleep(1)
-            checkbox = driver.find_element(By.CSS_SELECTOR, 'input[type="checkbox"]')
+            checkbox = driver.find_element(
+                By.CSS_SELECTOR, 'input[type="checkbox"]')
             checkbox.click()
             time.sleep(1)
             add_remove_button.click()
         else:
             time.sleep(1)
             add_remove_button.click()
-            
+
     def enable_disable():
         if enable_disable_button.text == 'Disable':
             time.sleep(1)
-            textbox = driver.find_element(By.CSS_SELECTOR, 'input[type="text"]')
-            textbox.send_keys('Test') 
+            textbox = driver.find_element(
+                By.CSS_SELECTOR, 'input[type="text"]')
+            textbox.send_keys('Test')
             time.sleep(1)
             enable_disable_button.click()
         else:
@@ -414,15 +441,127 @@ def dynamic_controls():
         WebDriverWait(driver, 10).until(
             EC.invisibility_of_element_located((By.ID, 'loading')))
         time.sleep(2)
-        
+
     for i in range(3):
         add_remove()
         enable_disable()
         loading()
-    
+
     driver.back()
+
+
+def dynamic_loading():
+    xpath_text = 'Dynamic Loading'
+    dynamicLoading = webdriverwait_func(xpath_text)
+    dynamicLoading.click()
+
+    def hidden_element():
+        hiddenElement = driver.find_element(
+        By.XPATH, '//*[contains(text(), "Example 1: Element on page that is hidden")]')
+        hiddenElement.click()
+        time.sleep(2)
+        
+        startButton = driver.find_element(
+            By.XPATH, '//*[contains(text(), "Start")]')
+        startButton.click()
+        time.sleep(5)
+        
+        helloWorld_hidden = webdriverwait_func('Hello World!')
+        helloWorld_hidden_text = helloWorld_hidden.text
+        print(f'The hidden element is {helloWorld_hidden_text}')
+        time.sleep(1)
+        driver.back()
+        
+    def rendered_element():
+        renderedElement = driver.find_element(
+        By.XPATH, '//*[contains(text(), "Example 2: Element rendered after the fact")]')
+        renderedElement.click()
+        time.sleep(2)
+        
+        startButton = driver.find_element(
+            By.XPATH, '//*[contains(text(), "Start")]')
+        startButton.click()
+        time.sleep(5)
+        
+        helloWorld_hidden = WebDriverWait(driver, 20).until(
+            EC.visibility_of_element_located(
+                (By.ID, 'finish'))
+        )
+        helloWorld_hidden_text = helloWorld_hidden.text
+        print(f'The rendered element after the fact is {helloWorld_hidden_text}')
+        time.sleep(1)
+        driver.back()
     
+    hidden_element()
+    rendered_element() # this uses the visibility_of_element
+    driver.get(originalURL)
+
+def entry_ad():
+    xpath_text = 'Entry Ad'
+    entryAd = webdriverwait_func(xpath_text)
+    entryAd.click()
     
+    restartAd = WebDriverWait(driver, 10).until(
+        EC.visibility_of_element_located((By.ID, 'restart-ad')))
+    
+    def closeModal():
+        print('Closing the Entry Ad')
+        closeBtn = driver.find_element(By.XPATH, '//*[contains(text(), "Close")]')
+        closeBtn.click()
+        time.sleep(2)
+    
+    modals_displayed = 0    
+    while modals_displayed < 2: # I use while so that the modal will show at least twice. 
+        try:
+            time.sleep(2)
+            modalDisplay = WebDriverWait(driver, 10).until(
+                EC.visibility_of_element_located((By.ID, 'modal'))
+            )
+
+            if modalDisplay.is_displayed():
+                closeModal()
+                restartAd.click()
+                print('Restarting the Ad')
+                modals_displayed += 1
+            else:
+                time.sleep(2)
+                restartAd.click()
+        except TimeoutException:
+            print("Timeout waiting for modal. Exiting loop.")
+            break
+    driver.get(originalURL)
+    
+def exit_intent():
+    xpath_text = 'Exit Intent'
+    exitIntent = webdriverwait_func(xpath_text)
+    exitIntent.click()
+    
+    y_offset = 300
+    
+    time.sleep(5)
+    # driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.END)
+    point_of_offset = driver.find_element(By.XPATH, '//*[contains(text(), "Elemental Selenium")]')
+    
+    try:
+    # Continue the loop until the modal appears or a timeout occurs
+        timeout = 10  # Set your desired timeout
+        start_time = time.time()
+
+        while time.time() - start_time < timeout:
+            # Move the cursor to the reference element with offset
+            action_chains.move_to_element_with_offset(point_of_offset, 0, y_offset).perform()
+            time.sleep(1)  # Adjust the sleep duration as needed
+            action_chains.move_to_element_with_offset(point_of_offset, 0, -y_offset).perform()
+            time.sleep(1)  # Adjust the sleep duration as needed
+            print('1')
+            # Check if the modal is visible
+            if EC.visibility_of_element_located((By.ID, 'content'))(driver):
+                print("Modal appeared!")
+                break
+
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+       
 if __name__ == '__main__':
     main()
 
