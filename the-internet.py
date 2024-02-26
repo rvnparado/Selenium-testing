@@ -45,7 +45,11 @@ def main():
     # exit_intent()
     # file_download() # this will download all files
     # file_upload()
-    floating_menu()
+    # floating_menu()
+    # forgot_password()
+    # form_authentication() 
+    # frames()
+    geolocation()
 
 
 def webdriverwait_func(xpath_text):
@@ -580,17 +584,17 @@ def file_download():
 
     listExample = driver.find_element(By.CLASS_NAME, 'example')
     files = listExample.find_elements(By.CSS_SELECTOR, 'a')
-    
+
     print(f'Downloading {len(files)} files...')
     time.sleep(2)
-    
+
     for file in files:
         file.click()
         time.sleep(1)
 
     time.sleep(2)
     print(f'Succesfully downloaded {len(files)} files...')
-    
+
     driver.get(originalURL)
 
 
@@ -661,6 +665,164 @@ def floating_menu():
     driver.get(originalURL)
 
 
+def forgot_password():
+    xpath_text = 'Forgot Password'
+    forgotPassword = webdriverwait_func(xpath_text)
+    forgotPassword.click()
+
+    email_textbox = driver.find_element(By.ID, 'email')
+    email_textbox.send_keys('testing@gmail')
+    time.sleep(2)
+    retrieve_button = driver.find_element(By.ID, 'form_submit')
+    retrieve_button.click()
+    time.sleep(2)
+    driver.get(originalURL)
+
+
+def form_authentication():
+    xpath_text = 'Form Authentication'
+    username = 'tomsmith'
+    password = 'SuperSecretPassword!'
+    formAuthentication = driver.find_element(
+        By.XPATH, f'//*[contains(text(), "{xpath_text}")]')
+    formAuthentication.click()
+    
+    def valid():
+        user_textbox = driver.find_element(By.ID, 'username')
+        user_textbox.send_keys(f'{username}')
+        pass_textbox = driver.find_element(By.ID, 'password')
+        pass_textbox.send_keys(f'{password}')
+        time.sleep(1)
+        login_button = driver.find_element(By.XPATH, '//*[contains(text(), " Login")]')
+        login_button.click()
+        time.sleep(2)
+        logout_button = driver.find_element(By.XPATH, '//*[contains(text(), " Logout")]')
+        logout_button.click()
+        time.sleep(2)
+        
+    def invalid():
+        user_textbox = driver.find_element(By.ID, 'username')
+        user_textbox.send_keys('invalid')
+        pass_textbox = driver.find_element(By.ID, 'password')
+        pass_textbox.send_keys('invalid')
+        time.sleep(1)
+        login_button = driver.find_element(By.XPATH, '//*[contains(text(), " Login")]')
+        login_button.click()
+        time.sleep(2)
+        error_message = driver.find_element(By.ID, 'flash')
+        print(error_message.text)
+        time.sleep(2)
+    
+    valid()
+    invalid()
+    driver.get(originalURL)
+
+
+def frames():
+    xpath_text = 'Frames'
+    frame_url = 'https://the-internet.herokuapp.com/frames'
+    frames_home = driver.find_element(By.XPATH, f'//*[contains(text(), "{xpath_text}")]')
+    frames_home.click()
+    
+    def nested_frames():
+        xpath_text = 'Nested Frames'
+        nestedFrames = driver.find_element(By.XPATH, f'//*[contains(text(), "{xpath_text}")]')
+        nestedFrames.click()
+        
+        print('This is frameset middle and it has 3 frames: ')
+        def top_frame():
+            driver.switch_to.frame('frame-top')
+            time.sleep(1)
+        
+        def left_frame():   
+            top_frame() 
+            driver.switch_to.frame('frame-left')
+            frame_left_text = driver.find_element(By.CSS_SELECTOR, 'body').text
+            print(f'This frame has a body of {frame_left_text}')
+            driver.switch_to.default_content()
+            time.sleep(1)
+        
+        def middle_frame():
+            top_frame()          
+            driver.switch_to.frame('frame-middle')
+            frame_middle_text = driver.find_element(By.CSS_SELECTOR, 'body').text
+            print(f'This frame has a body of {frame_middle_text}')
+            driver.switch_to.default_content()
+            time.sleep(1)
+        
+        def right_frame():
+            top_frame()  
+            driver.switch_to.frame('frame-right')
+            frame_right_text = driver.find_element(By.CSS_SELECTOR, 'body').text
+            print(f'This frame has a body of {frame_right_text}')
+            driver.switch_to.default_content()
+            time.sleep(1)
+        
+        def bottom_frame():
+            driver.switch_to.frame('frame-bottom')
+            frame_bottom_text = driver.find_element(By.CSS_SELECTOR, 'body').text
+            print(f'This is frame bottom and has a body of {frame_bottom_text}')
+            driver.switch_to.default_content()
+            time.sleep(1)
+
+        left_frame()
+        middle_frame()
+        right_frame()
+        bottom_frame()
+        driver.get(frame_url)
+    
+    def iframes():
+        xpath_text = 'iFrame'
+        iFrames = driver.find_element(By.XPATH, f'//*[contains(text(), "{xpath_text}")]')
+        iFrames.click() 
+        
+        iframe_element = driver.find_element(By.CSS_SELECTOR, 'iframe')
+        
+        driver.switch_to.frame(iframe_element)
+        iframe_body = driver.find_element(By.ID, 'tinymce')
+        iframe_body.clear()
+            
+        iframe_text = """
+            <b>This is a Bold Text</b><br>
+            <i>This is an Italic Text</i><br>
+            <u>This is an Underlined Text</u><br>
+            <strike>This is a Strikethrough Text</strike><br>
+            <span style='color:red;'>This is a Red Text</span><br>
+        """
+        driver.execute_script("arguments[0].innerHTML = arguments[1];", iframe_body, iframe_text) # this will insert pre defined text or paragraphs
+        time.sleep(1)
+        # iframe_body.send_keys(iframe_text) # this will only accept string without styles or formats.
+        driver.switch_to.default_content()
+        time.sleep(1)
+        
+    nested_frames()
+    iframes()
+    driver.get(originalURL)
+
+
+def geolocation():
+    xpath_text = 'Geolocation'
+    geolcoation_home = driver.find_element(By.XPATH, f'//*[contains(text(), "{xpath_text}")]')
+    geolcoation_home.click()
+    
+    geolocation_button = driver.find_element(By.XPATH, f'//*[contains(text(), "Where am I?")]')
+    geolocation_button.click()
+    time.sleep(1)
+    
+    # geolocation_alert = WebDriverWait(driver, 10).until(EC.alert_is_present())
+    # geolocation_alert.accept()
+    
+    latitude = driver.find_element(By.ID, 'lat-value')
+    longitude = driver.find_element(By.ID, 'long-value')
+    map_link = driver.find_element(By.XPATH, '//*[contains(text(), "See it on Google")]')
+    time.sleep(1)
+    
+    print(f'Your current Latitude is {latitude.text} and Longitude is {longitude.text}.')
+    map_link.click()
+    time.sleep(3)
+    
+    driver.get(originalURL)
+        
 if __name__ == '__main__':
     main()
 
@@ -671,5 +833,7 @@ if __name__ == '__main__':
 #     stars = "*" * (2 * i - 1)
 #     print(spaces + stars)
 
+# string = 'abcdefgh'
+# print(string[::-1])
 
 time.sleep(5)
