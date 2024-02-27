@@ -47,9 +47,13 @@ def main():
     # file_upload()
     # floating_menu()
     # forgot_password()
-    # form_authentication() 
+    # form_authentication()
     # frames()
-    geolocation()
+    # geolocation()
+    # horizontal_slider()
+    # hovers()
+    # infinite_scroll()
+    inputs()
 
 
 def webdriverwait_func(xpath_text):
@@ -686,33 +690,36 @@ def form_authentication():
     formAuthentication = driver.find_element(
         By.XPATH, f'//*[contains(text(), "{xpath_text}")]')
     formAuthentication.click()
-    
+
     def valid():
         user_textbox = driver.find_element(By.ID, 'username')
         user_textbox.send_keys(f'{username}')
         pass_textbox = driver.find_element(By.ID, 'password')
         pass_textbox.send_keys(f'{password}')
         time.sleep(1)
-        login_button = driver.find_element(By.XPATH, '//*[contains(text(), " Login")]')
+        login_button = driver.find_element(
+            By.XPATH, '//*[contains(text(), " Login")]')
         login_button.click()
         time.sleep(2)
-        logout_button = driver.find_element(By.XPATH, '//*[contains(text(), " Logout")]')
+        logout_button = driver.find_element(
+            By.XPATH, '//*[contains(text(), " Logout")]')
         logout_button.click()
         time.sleep(2)
-        
+
     def invalid():
         user_textbox = driver.find_element(By.ID, 'username')
         user_textbox.send_keys('invalid')
         pass_textbox = driver.find_element(By.ID, 'password')
         pass_textbox.send_keys('invalid')
         time.sleep(1)
-        login_button = driver.find_element(By.XPATH, '//*[contains(text(), " Login")]')
+        login_button = driver.find_element(
+            By.XPATH, '//*[contains(text(), " Login")]')
         login_button.click()
         time.sleep(2)
         error_message = driver.find_element(By.ID, 'flash')
         print(error_message.text)
         time.sleep(2)
-    
+
     valid()
     invalid()
     driver.get(originalURL)
@@ -721,47 +728,54 @@ def form_authentication():
 def frames():
     xpath_text = 'Frames'
     frame_url = 'https://the-internet.herokuapp.com/frames'
-    frames_home = driver.find_element(By.XPATH, f'//*[contains(text(), "{xpath_text}")]')
+    frames_home = driver.find_element(
+        By.XPATH, f'//*[contains(text(), "{xpath_text}")]')
     frames_home.click()
-    
+
     def nested_frames():
         xpath_text = 'Nested Frames'
-        nestedFrames = driver.find_element(By.XPATH, f'//*[contains(text(), "{xpath_text}")]')
+        nestedFrames = driver.find_element(
+            By.XPATH, f'//*[contains(text(), "{xpath_text}")]')
         nestedFrames.click()
-        
+
         print('This is frameset middle and it has 3 frames: ')
+
         def top_frame():
             driver.switch_to.frame('frame-top')
             time.sleep(1)
-        
-        def left_frame():   
-            top_frame() 
+
+        def left_frame():
+            top_frame()
             driver.switch_to.frame('frame-left')
             frame_left_text = driver.find_element(By.CSS_SELECTOR, 'body').text
             print(f'This frame has a body of {frame_left_text}')
             driver.switch_to.default_content()
             time.sleep(1)
-        
+
         def middle_frame():
-            top_frame()          
+            top_frame()
             driver.switch_to.frame('frame-middle')
-            frame_middle_text = driver.find_element(By.CSS_SELECTOR, 'body').text
+            frame_middle_text = driver.find_element(
+                By.CSS_SELECTOR, 'body').text
             print(f'This frame has a body of {frame_middle_text}')
             driver.switch_to.default_content()
             time.sleep(1)
-        
+
         def right_frame():
-            top_frame()  
+            top_frame()
             driver.switch_to.frame('frame-right')
-            frame_right_text = driver.find_element(By.CSS_SELECTOR, 'body').text
+            frame_right_text = driver.find_element(
+                By.CSS_SELECTOR, 'body').text
             print(f'This frame has a body of {frame_right_text}')
             driver.switch_to.default_content()
             time.sleep(1)
-        
+
         def bottom_frame():
             driver.switch_to.frame('frame-bottom')
-            frame_bottom_text = driver.find_element(By.CSS_SELECTOR, 'body').text
-            print(f'This is frame bottom and has a body of {frame_bottom_text}')
+            frame_bottom_text = driver.find_element(
+                By.CSS_SELECTOR, 'body').text
+            print(f'This is frame bottom and has a body of {
+                  frame_bottom_text}')
             driver.switch_to.default_content()
             time.sleep(1)
 
@@ -770,18 +784,19 @@ def frames():
         right_frame()
         bottom_frame()
         driver.get(frame_url)
-    
+
     def iframes():
         xpath_text = 'iFrame'
-        iFrames = driver.find_element(By.XPATH, f'//*[contains(text(), "{xpath_text}")]')
-        iFrames.click() 
-        
+        iFrames = driver.find_element(
+            By.XPATH, f'//*[contains(text(), "{xpath_text}")]')
+        iFrames.click()
+
         iframe_element = driver.find_element(By.CSS_SELECTOR, 'iframe')
-        
+
         driver.switch_to.frame(iframe_element)
         iframe_body = driver.find_element(By.ID, 'tinymce')
         iframe_body.clear()
-            
+
         iframe_text = """
             <b>This is a Bold Text</b><br>
             <i>This is an Italic Text</i><br>
@@ -789,12 +804,13 @@ def frames():
             <strike>This is a Strikethrough Text</strike><br>
             <span style='color:red;'>This is a Red Text</span><br>
         """
-        driver.execute_script("arguments[0].innerHTML = arguments[1];", iframe_body, iframe_text) # this will insert pre defined text or paragraphs
+        driver.execute_script("arguments[0].innerHTML = arguments[1];", iframe_body,
+                              iframe_text)  # this will insert pre defined text or paragraphs
         time.sleep(1)
         # iframe_body.send_keys(iframe_text) # this will only accept string without styles or formats.
         driver.switch_to.default_content()
         time.sleep(1)
-        
+
     nested_frames()
     iframes()
     driver.get(originalURL)
@@ -802,30 +818,104 @@ def frames():
 
 def geolocation():
     xpath_text = 'Geolocation'
-    geolcoation_home = driver.find_element(By.XPATH, f'//*[contains(text(), "{xpath_text}")]')
+    geolcoation_home = driver.find_element(
+        By.XPATH, f'//*[contains(text(), "{xpath_text}")]')
     geolcoation_home.click()
-    
-    geolocation_button = driver.find_element(By.XPATH, f'//*[contains(text(), "Where am I?")]')
+
+    geolocation_button = driver.find_element(
+        By.XPATH, f'//*[contains(text(), "Where am I?")]')
     geolocation_button.click()
     time.sleep(1)
-    
+
     # geolocation_alert = WebDriverWait(driver, 10).until(EC.alert_is_present())
     # geolocation_alert.accept()
-    
+
     latitude = driver.find_element(By.ID, 'lat-value')
     longitude = driver.find_element(By.ID, 'long-value')
-    map_link = driver.find_element(By.XPATH, '//*[contains(text(), "See it on Google")]')
+    map_link = driver.find_element(
+        By.XPATH, '//*[contains(text(), "See it on Google")]')
     time.sleep(1)
-    
-    print(f'Your current Latitude is {latitude.text} and Longitude is {longitude.text}.')
+
+    print(f'Your current Latitude is {
+          latitude.text} and Longitude is {longitude.text}.')
     map_link.click()
     time.sleep(3)
+
+    driver.get(originalURL)
+
+
+def horizontal_slider():
+    xpath_text = 'Horizontal Slider'
+    min_value = 0
+    max_value = 5
+    target_value = 5
+    horizontalSlider = driver.find_element(
+        By.XPATH, f'//*[contains(text(), "{xpath_text}")]')
+    horizontalSlider.click()
+
+    slider_element = driver.find_element(By.XPATH, '//input[@type="range"]')
+    target_location = int(
+        ((target_value - min_value) / (max_value - min_value))*100) # this is percentage base that's why this will give us 100%
+    ActionChains(driver).drag_and_drop_by_offset(
+        slider_element, target_location, 0).perform()
+    time.sleep(2)
+    driver.get(originalURL)
+
+
+def hovers():
+    xpath_text = 'Hovers'
+    hover_home = driver.find_element(
+        By.XPATH, f'//*[contains(text(), "{xpath_text}")]')
+    hover_home.click()
+    
+    hover_elements = driver.find_elements(By.CLASS_NAME, 'figure')
+    
+    for i in range(len(hover_elements)):
+        element = hover_elements[i]
+        action_chains.move_to_element(element).perform()
+        time.sleep(1)
+        
+
+        wait = WebDriverWait(driver, 10)
+        element_profile = wait.until(EC.element_to_be_clickable((By.XPATH, f'//a[contains(@href, "/users/{i+1}") and contains(text(), "View profile")]')))
+        element_user = element.find_element(By.CSS_SELECTOR, 'h5')
+        time.sleep(1)
+        print(f'This user is {element_user.text}')
+        element_profile.click()
+        time.sleep(2)
+        driver.back()
+    
+    driver.get(originalURL)    
+
+
+def infinite_scroll():
+    xpath_text = 'Infinite Scroll'
+    infiniteScroll = driver.find_element(
+        By.XPATH, f'//*[contains(text(), "{xpath_text}")]')
+    infiniteScroll.click()
+
+    def scroll_down(driver):
+        driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.END)
+        time.sleep(2)  # Add a small delay to allow content to load (adjust as needed)
+        
+    for i in range(10):  # this will indicate how many scroll will you take
+        scroll_down(driver)
+        visible_elements = driver.find_elements(By.CSS_SELECTOR, '.jscroll-added') # no need to add this, just in case you want to print the content
+        i = i + 1
     
     driver.get(originalURL)
+
+def inputs():
+    xpath_text = 'Inputs'
+    inputs_home = driver.find_element(
+        By.XPATH, f'//*[contains(text(), "{xpath_text}")]')
+    inputs_home.click()   
+    
+    int_inputbox = driver.find_element(By.XPATH, '//input[@type="number"]')
+    int_inputbox.send_keys('1234567890')
         
 if __name__ == '__main__':
     main()
-
 # n = 5  # Change this value to adjust the height of the triangle
 
 # for i in range(1, n + 1):
