@@ -53,7 +53,8 @@ def main():
     # horizontal_slider()
     # hovers()
     # infinite_scroll()
-    inputs()
+    # inputs()
+    jquery_ui()
 
 
 def webdriverwait_func(xpath_text):
@@ -913,7 +914,32 @@ def inputs():
     
     int_inputbox = driver.find_element(By.XPATH, '//input[@type="number"]')
     int_inputbox.send_keys('1234567890')
+
+def jquery_ui():
+    xpath_text = 'JQuery UI Menus'
+    jqueryui_home = driver.find_element(
+        By.XPATH, f'//*[contains(text(), "{xpath_text}")]')
+    jqueryui_home.click()
+    
+    menu = driver.find_element(By.ID, 'menu')
+    enabled_list = menu.find_element(By.ID, 'ui-id-3')
+    download = enabled_list.find_element(By.XPATH, '//*[contains(text(), "Downloads")]')  
+    download_list = download.find_elements(By.XPATH, '//*[contains(text(), "PDF")]')
+    download_lists = ['PDF', 'CSV', 'Excel']
+    
+    for item in download_lists:
+        enabled_list.click()
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[contains(text(), "Downloads")]')))
+        download.click()
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, f'.//*[contains(text(), "{item}")]'))).click()
+
+        # driver.switch_to.window(driver.window_handles[0])
         
+    jquiry_url = driver.find_element(By.XPATH, '//*[contains(text(), "JQuery UI Menus")]')
+    jquiry_url.click()
+    time.sleep(2)
+    driver.get(originalURL)
+      
 if __name__ == '__main__':
     main()
 # n = 5  # Change this value to adjust the height of the triangle
