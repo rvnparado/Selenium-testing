@@ -42,7 +42,7 @@ def main():
     # dynamic_controls()
     # dynamic_loading()
     # entry_ad()
-    # exit_intent()
+    # # exit_intent()
     # file_download() # this will download all files
     # file_upload()
     # floating_menu()
@@ -54,7 +54,11 @@ def main():
     # hovers()
     # infinite_scroll()
     # inputs()
-    jquery_ui()
+    # jquery_ui()
+    # js_alerts()
+    # js_event_error()
+    # key_presses()
+    largedeep_dom()
 
 
 def webdriverwait_func(xpath_text):
@@ -593,7 +597,7 @@ def file_download():
     print(f'Downloading {len(files)} files...')
     time.sleep(2)
 
-    for file in files:
+    for file in files[0:5]:  # this limits to how many files to download
         file.click()
         time.sleep(1)
 
@@ -856,7 +860,8 @@ def horizontal_slider():
 
     slider_element = driver.find_element(By.XPATH, '//input[@type="range"]')
     target_location = int(
-        ((target_value - min_value) / (max_value - min_value))*100) # this is percentage base that's why this will give us 100%
+        # this is percentage base that's why this will give us 100%
+        ((target_value - min_value) / (max_value - min_value))*100)
     ActionChains(driver).drag_and_drop_by_offset(
         slider_element, target_location, 0).perform()
     time.sleep(2)
@@ -868,25 +873,25 @@ def hovers():
     hover_home = driver.find_element(
         By.XPATH, f'//*[contains(text(), "{xpath_text}")]')
     hover_home.click()
-    
+
     hover_elements = driver.find_elements(By.CLASS_NAME, 'figure')
-    
+
     for i in range(len(hover_elements)):
         element = hover_elements[i]
         action_chains.move_to_element(element).perform()
         time.sleep(1)
-        
 
         wait = WebDriverWait(driver, 10)
-        element_profile = wait.until(EC.element_to_be_clickable((By.XPATH, f'//a[contains(@href, "/users/{i+1}") and contains(text(), "View profile")]')))
+        element_profile = wait.until(EC.element_to_be_clickable(
+            (By.XPATH, f'//a[contains(@href, "/users/{i+1}") and contains(text(), "View profile")]')))
         element_user = element.find_element(By.CSS_SELECTOR, 'h5')
         time.sleep(1)
         print(f'This user is {element_user.text}')
         element_profile.click()
         time.sleep(2)
         driver.back()
-    
-    driver.get(originalURL)    
+
+    driver.get(originalURL)
 
 
 def infinite_scroll():
@@ -897,49 +902,135 @@ def infinite_scroll():
 
     def scroll_down(driver):
         driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.END)
-        time.sleep(2)  # Add a small delay to allow content to load (adjust as needed)
-        
+        # Add a small delay to allow content to load (adjust as needed)
+        time.sleep(2)
+
     for i in range(10):  # this will indicate how many scroll will you take
         scroll_down(driver)
-        visible_elements = driver.find_elements(By.CSS_SELECTOR, '.jscroll-added') # no need to add this, just in case you want to print the content
+        # no need to add this, just in case you want to print the content
+        visible_elements = driver.find_elements(
+            By.CSS_SELECTOR, '.jscroll-added')
         i = i + 1
-    
+
     driver.get(originalURL)
+
 
 def inputs():
     xpath_text = 'Inputs'
     inputs_home = driver.find_element(
         By.XPATH, f'//*[contains(text(), "{xpath_text}")]')
-    inputs_home.click()   
-    
+    inputs_home.click()
+
     int_inputbox = driver.find_element(By.XPATH, '//input[@type="number"]')
     int_inputbox.send_keys('1234567890')
+    time.sleep(1)
+    driver.get(originalURL)
+
 
 def jquery_ui():
     xpath_text = 'JQuery UI Menus'
     jqueryui_home = driver.find_element(
         By.XPATH, f'//*[contains(text(), "{xpath_text}")]')
     jqueryui_home.click()
-    
+
     menu = driver.find_element(By.ID, 'menu')
     enabled_list = menu.find_element(By.ID, 'ui-id-3')
-    download = enabled_list.find_element(By.XPATH, '//*[contains(text(), "Downloads")]')  
-    download_list = download.find_elements(By.XPATH, '//*[contains(text(), "PDF")]')
+    download = enabled_list.find_element(
+        By.XPATH, '//*[contains(text(), "Downloads")]')
+    download_list = download.find_elements(
+        By.XPATH, '//*[contains(text(), "PDF")]')
     download_lists = ['PDF', 'CSV', 'Excel']
-    
+
     for item in download_lists:
         enabled_list.click()
-        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[contains(text(), "Downloads")]')))
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable(
+            (By.XPATH, '//*[contains(text(), "Downloads")]')))
         download.click()
-        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, f'.//*[contains(text(), "{item}")]'))).click()
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable(
+            (By.XPATH, f'.//*[contains(text(), "{item}")]'))).click()
 
         # driver.switch_to.window(driver.window_handles[0])
-        
-    jquiry_url = driver.find_element(By.XPATH, '//*[contains(text(), "JQuery UI Menus")]')
+
+    jquiry_url = driver.find_element(
+        By.XPATH, '//*[contains(text(), "JQuery UI Menus")]')
     jquiry_url.click()
     time.sleep(2)
     driver.get(originalURL)
-      
+
+
+def js_alerts():
+    xpath_text = 'JavaScript Alerts'
+    jsalerts_home = driver.find_element(
+        By.XPATH, f'//*[contains(text(), "{xpath_text}")]')
+    jsalerts_home .click()
+
+    button_group = driver.find_element(By.CSS_SELECTOR, 'ul')
+    js_buttons = button_group.find_elements(By.CSS_SELECTOR, 'li')
+    for js_button in js_buttons:
+        print(js_button.text)
+        button = driver.find_element(
+            By.XPATH, f'//*[contains(text(), "{js_button.text}")]')
+        time.sleep(1)
+        if button.text in ['Click for JS Alert', 'Click for JS Confirm']:
+            button.click()
+            time.sleep(1)
+            alert.accept()
+        else:
+            button.click()
+            alert.send_keys('Testing')
+            time.sleep(2)
+            alert.accept()
+
+        time.sleep(1)
+    driver.get(originalURL)
+
+
+def js_event_error():
+    xpath_text = 'JavaScript onload event error'
+    jsevent_home = driver.find_element(
+        By.XPATH, f'//*[contains(text(), "{xpath_text}")]')
+    jsevent_home.click()
+
+    error_body = driver.find_element(By.CSS_SELECTOR, 'p')
+    print(error_body.text)
+    time.sleep(1)
+    driver.get(originalURL)
+
+
+def key_presses():
+    xpath_text = 'Key Presses'
+    keyPresses_home = driver.find_element(
+        By.XPATH, f'//*[contains(text(), "{xpath_text}")]')
+    keyPresses_home.click()
+
+    target = driver.find_element(By.ID, 'target')
+    all_keys = [key for key in dir(Keys) if not key.startswith('__')]
+    for key in all_keys[0:18]:  # I use this to limit the key pressed until ENTER
+        print(f'Pressing {key} ...')
+        time.sleep(1)
+        # the getattr the Keys class using the key(text)
+        target.send_keys(getattr(Keys, key))
+
+    time.sleep(1)
+    driver.get(originalURL)
+
+
+def largedeep_dom():
+    xpath_text = 'Large & Deep DOM'
+    largedeepDom_home = driver.find_element(
+        By.XPATH, f'//*[contains(text(), "{xpath_text}")]')
+    largedeepDom_home.click()
+
+    sibling_elements = driver.find_elements(
+        By.XPATH, '//div[starts-with(@id, "sibling-")]')
+    # print(sibling_elements[25].text)
+    for i in range(0,150,25): #starts with the first: max is all the siblings: step for 25
+        sibling = sibling_elements[i].text
+        print(sibling)
+        print(f'//////////////{i}')
+        time.sleep(1)
+
+
 if __name__ == '__main__':
     main()
 # n = 5  # Change this value to adjust the height of the triangle
