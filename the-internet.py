@@ -58,7 +58,11 @@ def main():
     # js_alerts()
     # js_event_error()
     # key_presses()
-    largedeep_dom()
+    # largedeep_dom()
+    # multiple_windows()
+    # notification_messages()
+    # redirect_link()
+    secure_fileDL()
 
 
 def webdriverwait_func(xpath_text):
@@ -1024,12 +1028,114 @@ def largedeep_dom():
     sibling_elements = driver.find_elements(
         By.XPATH, '//div[starts-with(@id, "sibling-")]')
     # print(sibling_elements[25].text)
-    for i in range(0,150,25): #starts with the first: max is all the siblings: step for 25
+    for i in range(0, 150, 25):  # starts with the first: max is all the siblings: step for 25
         sibling = sibling_elements[i].text
         print(sibling)
         print(f'//////////////{i}')
         time.sleep(1)
+    driver.get(originalURL)
 
+
+def multiple_windows():
+    xpath_text = 'Multiple Windows'
+    multiplewindows_home = driver.find_element(
+        By.XPATH, f'//*[contains(text(), "{xpath_text}")]')
+    multiplewindows_home.click()
+
+    new_button = driver.find_element(
+        By.XPATH, f'//*[contains(text(), "Click Here")]')
+    new_button.click()
+    time.sleep(1)
+    all_handles = driver.window_handles
+    # this will switch to the original windows
+    driver.switch_to.window(all_handles[0])
+    time.sleep(1)
+    driver.switch_to.window(all_handles[1])
+    time.sleep(1)
+    driver.close()
+    time.sleep(1)
+    driver.get(originalURL)
+
+
+def notification_messages():
+    xpath_text = 'Notification Messages'
+    notifmessages_home = driver.find_element(
+        By.XPATH, f'//*[contains(text(), "{xpath_text}")]')
+    notifmessages_home.click()
+
+    # i put the locate element inside this because the page refreshes whenever click here is clicked.
+    for i in range(5):
+        click_button = driver.find_element(
+            By.XPATH, '//*[contains(text(), "Click here")]')
+        time.sleep(1)
+        click_button.click()
+        time.sleep(1)
+        flash_message = driver.find_element(By.ID, 'flash')
+        print(flash_message.text)
+
+    driver.get(originalURL)
+
+
+def redirect_link():
+    xpath_text = 'Redirect Link'
+    redirectlink_home = driver.find_element(
+        By.XPATH, f'//*[contains(text(), "{xpath_text}")]')
+    redirectlink_home.click()
+
+    redirect_button = driver.find_element(
+        By.XPATH, '//*[contains(text(), "here")]')
+    redirect_button.click()
+
+    status_list = driver.find_elements(By.CSS_SELECTOR, 'li')
+    lists = []
+    for element in status_list:
+        list_text = element.text
+        lists.append(list_text)
+
+    for i in range(len(lists)):
+        list = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located(
+                (By.XPATH, f'//*[contains(text(), "{lists[i]}")]'))
+        )
+        list.click()
+        time.sleep(1)
+        current_url = driver.current_url
+        response = requests.get(current_url, allow_redirects=False)
+
+        print(f"The redirected page returned the expected status code: {
+              response.status_code}")
+        time.sleep(1)
+
+        here_button = driver.find_element(
+            By.XPATH, '//*[contains(text(), "here")]')
+        here_button.click()
+        time.sleep(1)
+        i = i + 1
+    driver.get(originalURL)
+
+
+def secure_fileDL():
+    xpath_text = 'Secure File Download'
+    securefileDL_home = driver.find_element(
+        By.XPATH, f'//*[contains(text(), "{xpath_text}")]')
+    securefileDL_home.click()
+
+    securefile_url = f'http://{username}:{
+        password}@the-internet.herokuapp.com/download_secure'
+    time.sleep(1)
+    driver.get(securefile_url)
+    time.sleep(1)
+
+    files_container = driver.find_element(By.CLASS_NAME, 'example')
+    files = files_container.find_elements(By.CSS_SELECTOR, 'a')
+
+    for file in files[0:5]:
+        time.sleep(1)
+        print(file.text)
+        file.click()
+        time.sleep(1)
+
+    driver.get(originalURL)
 
 if __name__ == '__main__':
     main()
