@@ -62,7 +62,14 @@ def main():
     # multiple_windows()
     # notification_messages()
     # redirect_link()
-    secure_fileDL()
+    # secure_fileDL()
+    shadow_DOM()
+    shifting_content()
+    slow_resources()
+    sortable_data()
+    status_codes()
+    typos()
+    WYSIWYG_Editor()
 
 
 def webdriverwait_func(xpath_text):
@@ -1137,6 +1144,64 @@ def secure_fileDL():
 
     driver.get(originalURL)
 
+
+def shadow_DOM():
+    xpath_text = 'Shadow DOM'
+    shadowDOM_home = driver.find_element(
+        By.XPATH, f'//*[contains(text(), "{xpath_text}")]')
+    shadowDOM_home.click()
+    time.sleep(2)
+    driver.get(originalURL)
+    
+def shifting_content():
+    xpath_text = 'Shifting Content'
+    shiftingContent_home = driver.find_element(
+        By.XPATH, f'//*[contains(text(), "{xpath_text}")]')
+    shiftingContent_home.click()
+    time.sleep(2)
+    driver.get(originalURL)
+    
+def slow_resources():
+    xpath_text = 'Slow Resources'
+    slowResources_home = driver.find_element(
+        By.XPATH, f'//*[contains(text(), "{xpath_text}")]')
+    slowResources_home.click()
+    time.sleep(2)
+    driver.get(originalURL)
+    
+def sortable_data():
+    xpath_text = 'Sortable Data Tables'
+    sortableData_home = driver.find_element(
+        By.XPATH, f'//*[contains(text(), "{xpath_text}")]')
+    sortableData_home.click()
+    time.sleep(2)
+    driver.get(originalURL)
+    
+def status_codes():
+    xpath_text = 'Status Codes'
+    statusCodes_home = driver.find_element(
+        By.XPATH, f'//*[contains(text(), "{xpath_text}")]')
+    statusCodes_home.click()
+    time.sleep(2)
+    driver.get(originalURL)
+    
+def typos():
+    xpath_text = 'Typos'
+    typos_home = driver.find_element(
+        By.XPATH, f'//*[contains(text(), "{xpath_text}")]')
+    typos_home.click()
+    time.sleep(2)
+    driver.get(originalURL)
+    
+
+def WYSIWYG_Editor():
+    xpath_text = 'WYSIWYG Editor'
+    WYSIWYG_home = driver.find_element(
+        By.XPATH, f'//*[contains(text(), "{xpath_text}")]')
+    WYSIWYG_home.click()
+    time.sleep(2)
+    driver.get(originalURL)
+    
 if __name__ == '__main__':
     main()
 # n = 5  # Change this value to adjust the height of the triangle
