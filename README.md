@@ -13,6 +13,18 @@ This repository contains training materials and projects related to Selenium aut
   - Demonstrations of handling dynamic content, drag-and-drop, and other advanced scenarios.
   - ...
 
+### 2. Formy Project
+
+- **Description:** The Formy Project is a Selenium automation project demonstrating form automation techniques. It covers interactions with input fields, buttons, dropdowns, and other form elements. Using Selenium WebDriver, it automates interactions with the Formy web application (https://formy-project.herokuapp.com/), providing examples and best practices for form testing.
+- **Contents:**
+  - Automation scripts for different form elements..
+  - Demonstrations of handling input fields, buttons, dropdowns, and more.
+  - Techniques for simulating user interactions like typing, clicking, and submitting forms.
+  - Best practices for handling form validation and error scenarios.
+  - Guidelines for writing maintainable and scalable automation scripts.3
+  - Integration with Selenium WebDriver for browser automation.
+  - Comprehensive documentation and usage examples for reference.
+
 ## Usage
 
 1. Clone the repository:
